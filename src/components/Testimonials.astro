@@ -1,0 +1,129 @@
+---
+import { Image } from 'astro:assets';
+import photoHendra from '../images/testimonial-hendra-widjaya.webp';
+import photoYasni from '../images/testimonial-yasni-lavinia.webp';
+import photoFitri from '../images/testimonial-fitri.webp';
+
+const testimonials = [
+  {
+    quote: 'Tim Digiland.id sangat profesional dan memahami kebutuhan bisnis kami. Hasil SEO mereka luar biasa, traffic meningkat 3x lipat!',
+    name: 'David R.',
+    role: 'Business Owner',
+    photo: photoHendra,
+  },
+  {
+    quote: 'Pelayanan responsif, strategi tepat, dan hasil nyata. Kami sangat puas bekerja sama dengan Digiland.id.',
+    name: 'Yasni Lavinia',
+    role: 'Marketing Manager',
+    photo: photoYasni,
+  },
+  {
+    quote: 'Website baru kami lebih cepat, modern, dan konversinya meningkat signifikan. Terima kasih Digiland.id!',
+    name: 'Fitri',
+    role: 'Business Owner',
+    photo: photoFitri,
+  },
+];
+---
+<section class="testimonials">
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <p class="eyebrow">Client Testimonials</p>
+      <h2>Apa Kata Klien Kami</h2>
+    </div>
+    <div class="testimonial-grid">
+      {testimonials.map((t, i) => (
+        <div class={`testimonial-card reveal reveal-${i}`}>
+          <svg class="quote-mark" width="28" height="22" viewBox="0 0 28 22" fill="none"><path d="M11.5 0C5.5 2.5 0 8 0 15c0 4 2.7 7 6.5 7 3.3 0 5.9-2.6 5.9-5.9 0-3-2-5.3-4.8-5.7C8.7 6.5 11.8 3.5 14 2.3L11.5 0zm14 0c-6 2.5-11.5 8-11.5 15 0 4 2.7 7 6.5 7 3.3 0 5.9-2.6 5.9-5.9 0-3-2-5.3-4.8-5.7C22.7 6.5 25.8 3.5 28 2.3L25.5 0z" fill="url(#qg)"/><defs><linearGradient id="qg" x1="0" y1="0" x2="28" y2="22"><stop stop-color="#7f3f99"/><stop offset="1" stop-color="#ed227d"/></linearGradient></defs></svg>
+          <div class="stars" aria-label="5 dari 5 bintang">
+            {Array.from({ length: 5 }).map(() => (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="#fcb040"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.6 6.8L12 16.9l-6.2 3.5 1.6-6.8L2.2 9l6.9-.7z"/></svg>
+            ))}
+          </div>
+          <p class="quote">{t.quote}</p>
+          <div class="person">
+            <Image src={t.photo} alt={t.name} width={88} height={88} class="person-photo" />
+            <div>
+              <strong>{t.name}</strong>
+              <span>{t.role}</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+    <div class="dots" aria-hidden="true">
+      <span class="active"></span><span></span><span></span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .testimonials {
+    padding: 6rem 0;
+    background: var(--paper-2);
+  }
+  .testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  .testimonial-card {
+    background: var(--paper);
+    padding: 1.75rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .testimonial-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card);
+  }
+  .quote-mark { margin-bottom: 0.5rem; }
+  .stars {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 0.85rem;
+  }
+  .quote {
+    color: var(--ink);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+  .person {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .person :global(.person-photo) {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .person span {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--slate);
+  }
+  .dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-top: 2.5rem;
+  }
+  .dots span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--line);
+  }
+  .dots span.active {
+    width: 20px;
+    border-radius: 4px;
+    background: var(--logo-purple);
+  }
+
+  .reveal-1 { transition-delay: 0.08s; }
+  .reveal-2 { transition-delay: 0.16s; }
+</style>

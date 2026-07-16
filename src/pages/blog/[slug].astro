@@ -1,0 +1,478 @@
+---
+// src/pages/blog/[slug].astro
+// [slug] di nama file = "dynamic route". Astro perlu tahu SEMUA slug yang
+// mungkin muncul di sini pada saat build, makanya wajib ada getStaticPaths().
+
+import Layout from '../../layouts/Layout.astro';
+import { getAllPostSlugs, getPostBySlug, getRelatedPosts } from '../../lib/wordpress.js';
+import { estimateReadingTime, buildTableOfContents, formatDateID } from '../../lib/content.js';
+
+export async function getStaticPaths() {
+  const slugs = await getAllPostSlugs();
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const post = await getPostBySlug(slug);
+
+const primaryCategory = post.categories?.nodes?.[0];
+const { html: contentWithIds, toc } = buildTableOfContents(post.content);
+const readingTime = estimateReadingTime(post.content);
+
+const relatedPool = await getRelatedPosts({
+  categorySlug: primaryCategory?.slug,
+  excludeSlug: post.slug,
+  limit: 6,
+});
+const related = relatedPool.slice(0, 3);
+const moreArticles = relatedPool.slice(3, 6);
+
+const pageUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : Astro.url.pathname;
+const shareText = encodeURIComponent(post.title.replace(/<[^>]+>/g, ''));
+const shareLinks = {
+  twitter: `https://twitter.com/intent/tweet?text=${shareText}&url=${encodeURIComponent(pageUrl)}`,
+  linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`,
+  facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`,
+};
+---
+<Layout title={post.title.replace(/<[^>]+>/g, '')} description={post.excerpt?.replace(/<[^>]+>/g, '').slice(0, 155)}>
+  <div class="progress-bar">
+    <div class="wrap progress-inner">
+      <span class="progress-label">Reading Progress</span>
+      <div class="progress-track" aria-hidden="true">
+        <div class="progress-fill" id="reading-progress"></div>
+      </div>
+      <span class="progress-pct" id="reading-progress-pct">0%</span>
+    </div>
+  </div>
+
+  <article class="article-page">
+    <div class="wrap article-grid">
+      <!-- ---- sidebar kiri: Table of Contents (sticky) ---- -->
+      <aside class="toc-col">
+        {toc.length > 0 && (
+          <nav class="toc reveal" aria-label="Daftar isi">
+            <p class="toc-title">Daftar Isi</p>
+            <ol>
+              {toc.map((item, i) => (
+                <li class={`level-${item.level}`}>
+                  <a href={`#${item.id}`}>{i + 1}. {item.text}</a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )}
+      </aside>
+
+      <!-- ---- konten utama ---- -->
+      <div class="main-col reveal">
+        {primaryCategory && <span class="tag">{primaryCategory.name}</span>}
+        <h1 set:html={post.title} />
+        <p class="excerpt" set:html={post.excerpt} />
+
+        <div class="byline">
+          <div class="author">
+            <div class="avatar" aria-hidden="true">{post.author?.node?.name?.[0] ?? 'D'}</div>
+            <div>
+              <strong>{post.author?.node?.name ?? 'Digiland.id'}</strong>
+              <span>{formatDateID(post.date)} &middot; {readingTime} min read</span>
+            </div>
+          </div>
+          <div class="share">
+            <span class="share-label">Bagikan artikel</span>
+            <a href={shareLinks.twitter} target="_blank" rel="noopener noreferrer" aria-label="Bagikan ke Twitter">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.9c-.7.3-1.5.6-2.4.7.8-.5 1.5-1.3 1.8-2.3-.8.5-1.7.8-2.6 1a4.1 4.1 0 00-7 3.7A11.6 11.6 0 013 4.9a4.1 4.1 0 001.3 5.5c-.7 0-1.3-.2-1.9-.5v.1c0 2 1.4 3.6 3.3 4a4.2 4.2 0 01-1.9.1 4.1 4.1 0 003.8 2.9A8.3 8.3 0 012 18.6a11.6 11.6 0 006.3 1.8c7.5 0 11.7-6.3 11.7-11.7v-.5c.8-.6 1.5-1.3 2-2.1z"/></svg>
+            </a>
+            <a href={shareLinks.linkedin} target="_blank" rel="noopener noreferrer" aria-label="Bagikan ke LinkedIn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 5a2 2 0 11-4-.02 2 2 0 014 .02zM7 8.5H3V21h4V8.5zm6.4 0H9.6V21h3.8v-6.4c0-3.6 4.6-3.9 4.6 0V21H22v-7.2c0-6.7-7.4-6.4-8.6-3.1V8.5z"/></svg>
+            </a>
+            <a href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" aria-label="Bagikan ke Facebook">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 10-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0022 12z"/></svg>
+            </a>
+            <button type="button" id="copy-link-btn" aria-label="Salin tautan">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.07 0l2.83-2.83a5 5 0 00-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 00-7.07 0L4.1 13.83a5 5 0 007.07 7.07l1.5-1.5"/></svg>
+            </button>
+          </div>
+        </div>
+
+        {post.featuredImage && (
+          <img
+            class="featured-image"
+            src={post.featuredImage.node.sourceUrl}
+            alt={post.featuredImage.node.altText || post.title}
+          />
+        )}
+
+        <!--
+          set:html dipakai karena post.content dari WordPress berupa HTML
+          (hasil dari editor Gutenberg/Elementor). contentWithIds sudah
+          disisipi id="..." di tiap <h2>/<h3> supaya link TOC di atas bisa
+          lompat ke bagian yang sesuai.
+        -->
+        <div class="content" set:html={contentWithIds} />
+      </div>
+
+      <!-- ---- sidebar kanan: Artikel Terbaru (related) ---- -->
+      <aside class="related-col">
+        {related.length > 0 && (
+          <div class="related-box reveal">
+            <p class="related-title">Artikel Terbaru</p>
+            <ul>
+              {related.map((r) => (
+                <li>
+                  <a href={`/blog/${r.slug}`}>
+                    <div class="thumb">
+                      {r.featuredImage ? (
+                        <img src={r.featuredImage.node.sourceUrl} alt={r.featuredImage.node.altText || r.title} loading="lazy" />
+                      ) : (
+                        <div class="img-fallback" aria-hidden="true"></div>
+                      )}
+                    </div>
+                    <div>
+                      <h4 set:html={r.title} />
+                      <span>{formatDateID(r.date)} &middot; {estimateReadingTime(r.excerpt || '')} min</span>
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </aside>
+    </div>
+  </article>
+
+  {moreArticles.length > 0 && (
+    <section class="more-articles reveal">
+      <div class="wrap">
+        <p class="grid-label">Lanjut Membaca</p>
+        <div class="more-grid">
+          {moreArticles.map((m) => (
+            <a href={`/blog/${m.slug}`} class="more-card">
+              <div class="thumb">
+                {m.featuredImage ? (
+                  <img src={m.featuredImage.node.sourceUrl} alt={m.featuredImage.node.altText || m.title} loading="lazy" />
+                ) : (
+                  <div class="img-fallback" aria-hidden="true"></div>
+                )}
+              </div>
+              <h4 set:html={m.title} />
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</Layout>
+
+<style>
+  .progress-bar {
+    position: sticky;
+    top: 0;
+    z-index: 39;
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+    padding: 0.7rem 0;
+  }
+  .progress-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .progress-label {
+    font-size: 0.78rem;
+    color: var(--slate);
+    white-space: nowrap;
+  }
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--line);
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--spectrum-btn);
+    border-radius: 999px;
+  }
+  .progress-pct {
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    color: var(--slate);
+    width: 2.5rem;
+    text-align: right;
+  }
+
+  .article-page { padding: 3rem 0 2rem; }
+  .article-grid {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr) 260px;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  /* ---- TOC (kotak berbingkai, sesuai mockup) ---- */
+  .toc {
+    position: sticky;
+    top: 5rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+  }
+  .toc-title {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 0.9rem;
+  }
+  .toc ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-left: 2px solid var(--line);
+  }
+  .toc li a {
+    display: block;
+    padding: 0.4rem 0 0.4rem 0.9rem;
+    margin-left: -2px;
+    border-left: 2px solid transparent;
+    font-size: 0.84rem;
+    color: var(--slate);
+    text-decoration: none;
+    line-height: 1.4;
+  }
+  .toc li.level-3 a { padding-left: 1.6rem; font-size: 0.8rem; }
+  .toc li a:hover { color: var(--logo-purple); border-left-color: var(--logo-purple); }
+
+  /* ---- main content ---- */
+  .main-col .tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--logo-purple);
+    background: rgba(127,63,153,0.1);
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    margin-bottom: 0.9rem;
+  }
+  .main-col h1 {
+    font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+    line-height: 1.28;
+  }
+  .main-col .excerpt {
+    color: var(--slate);
+    font-size: 1.02rem;
+    line-height: 1.65;
+    margin: 1rem 0 1.5rem;
+  }
+  .main-col .excerpt :global(p) { margin: 0; }
+
+  .byline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 1.75rem;
+  }
+  .author { display: flex; align-items: center; gap: 0.65rem; }
+  .avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--spectrum-btn);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+  }
+  .author strong { display: block; font-size: 0.88rem; }
+  .author span { display: block; font-size: 0.78rem; color: var(--slate); }
+  .share { display: flex; align-items: center; gap: 0.5rem; }
+  .share-label {
+    font-size: 0.8rem;
+    color: var(--slate);
+    margin-right: 0.2rem;
+    white-space: nowrap;
+  }
+  .share a, .share button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: #fff;
+    display: grid;
+    place-items: center;
+    color: var(--slate);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .share a:hover, .share button:hover { background: var(--logo-purple); border-color: var(--logo-purple); color: #fff; }
+  .share button.copied { background: #16a34a; border-color: #16a34a; color: #fff; }
+
+  .featured-image {
+    width: 100%;
+    border-radius: var(--radius);
+    margin-bottom: 2rem;
+    display: block;
+  }
+
+  /* ---- typografi konten artikel ---- */
+  .content { line-height: 1.8; font-size: 1rem; color: var(--ink); }
+  .content :global(h2) {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    margin: 2.25rem 0 0.9rem;
+    scroll-margin-top: 5.5rem;
+  }
+  .content :global(h3) {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    margin: 1.75rem 0 0.75rem;
+    scroll-margin-top: 5.5rem;
+  }
+  .content :global(p) { margin: 0 0 1.1rem; color: var(--ink); }
+  .content :global(img) {
+    max-width: 100%;
+    border-radius: 12px;
+    margin: 1.25rem 0;
+  }
+  .content :global(ul), .content :global(ol) {
+    margin: 0 0 1.1rem;
+    padding-left: 1.4rem;
+    color: var(--ink);
+  }
+  .content :global(li) { margin-bottom: 0.4rem; }
+  /* blockquote = "tip box" ungu lembut, sesuai mockup */
+  .content :global(blockquote) {
+    background: rgba(127,63,153,0.06);
+    border-left: 3px solid var(--logo-purple);
+    border-radius: 0 10px 10px 0;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    font-size: 0.94rem;
+    color: var(--ink);
+  }
+  .content :global(blockquote p) { margin: 0; }
+  .content :global(a) { color: var(--logo-purple); }
+  .content :global(code) {
+    background: var(--paper-2);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+  }
+
+  /* ---- related sidebar ---- */
+  .related-box { position: sticky; top: 5rem; }
+  .related-title {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 1rem;
+  }
+  .related-box ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1rem; }
+  .related-box a { display: flex; gap: 0.75rem; text-decoration: none; color: inherit; }
+  .related-box .thumb { width: 64px; height: 64px; border-radius: 10px; overflow: hidden; flex-shrink: 0; }
+  .related-box .thumb img, .related-box .img-fallback { width: 100%; height: 100%; object-fit: cover; }
+  .img-fallback { background: linear-gradient(135deg, #eee, #f6f6f7); }
+  .related-box h4 {
+    font-size: 0.86rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0 0 0.3rem;
+  }
+  .related-box span { font-size: 0.74rem; color: var(--slate); }
+
+  /* ---- lanjut membaca ---- */
+  .more-articles { padding: 1rem 0 5rem; }
+  .grid-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 1.25rem;
+  }
+  .more-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .more-card {
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .more-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card); }
+  .more-card .thumb { aspect-ratio: 16/10; }
+  .more-card .thumb img, .more-card .img-fallback { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .more-card h4 {
+    font-size: 0.92rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    line-height: 1.4;
+    padding: 1rem 1.1rem 1.2rem;
+    margin: 0;
+  }
+
+  @media (max-width: 1100px) {
+    .article-grid { grid-template-columns: 1fr; }
+    .toc-col { order: 2; }
+    .toc { position: static; border-top: 1px solid var(--line); padding-top: 1.5rem; margin-top: 1rem; }
+    .related-col { order: 3; }
+    .related-box { position: static; border-top: 1px solid var(--line); padding-top: 1.5rem; margin-top: 1.5rem; }
+  }
+  @media (max-width: 700px) {
+    .more-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  // Reading progress bar - hitung persentase scroll di sepanjang tinggi
+  // konten artikel, lalu update lebar .progress-fill + teks persentase.
+  const fill = document.getElementById('reading-progress');
+  const pctLabel = document.getElementById('reading-progress-pct');
+  const article = document.querySelector('.main-col');
+
+  function updateProgress() {
+    if (!fill || !article) return;
+    const rect = article.getBoundingClientRect();
+    const total = rect.height - window.innerHeight;
+    const scrolled = Math.min(Math.max(-rect.top, 0), total);
+    const pct = total > 0 ? (scrolled / total) * 100 : 0;
+    fill.style.width = `${pct}%`;
+    if (pctLabel) pctLabel.textContent = `${Math.round(pct)}%`;
+  }
+
+  document.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('resize', updateProgress);
+  updateProgress();
+
+  // Tombol "salin tautan" di baris share
+  const copyBtn = document.getElementById('copy-link-btn');
+  copyBtn?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      copyBtn.classList.add('copied');
+      setTimeout(() => copyBtn.classList.remove('copied'), 1500);
+    } catch {
+      // Clipboard API mungkin diblokir (mis. bukan HTTPS) - abaikan diam-diam.
+    }
+  });
+</script>

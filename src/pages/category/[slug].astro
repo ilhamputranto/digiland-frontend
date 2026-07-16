@@ -1,0 +1,79 @@
+---
+// src/pages/category/[slug].astro  ->  contoh: /category/tutorial
+// Dipakai kalau ada link kategori dari luar (misal dari WordPress) yang
+// mengarah ke arsip per-kategori. Style card-nya disamakan dengan grid
+// artikel di /blog supaya konsisten.
+
+import Layout from '../../layouts/Layout.astro';
+import { getAllCategorySlugs, getPostsByCategory } from '../../lib/wordpress.js';
+import { estimateReadingTime, formatDateID } from '../../lib/content.js';
+
+export async function getStaticPaths() {
+  const slugs = await getAllCategorySlugs();
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const { slug } = Astro.params;
+const category = await getPostsByCategory(slug);
+---
+<Layout title={`Kategori: ${category.name}`}>
+  <section class="category-page">
+    <div class="wrap">
+      <p class="eyebrow">Kategori</p>
+      <h1>{category.name}</h1>
+
+      <div class="post-grid">
+        {category.posts.nodes.map((post) => (
+          <a href={`/blog/${post.slug}`} class="post-card">
+            <div class="post-image">
+              {post.featuredImage ? (
+                <img src={post.featuredImage.node.sourceUrl} alt={post.featuredImage.node.altText || post.title} loading="lazy" />
+              ) : (
+                <div class="img-fallback" aria-hidden="true"></div>
+              )}
+            </div>
+            <div class="post-body">
+              <h3 set:html={post.title} />
+              <p class="meta">{formatDateID(post.date)} &middot; {estimateReadingTime(post.excerpt || '')} min read</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .category-page { padding: 3rem 0 5rem; }
+  h1 { font-size: clamp(1.6rem, 2.8vw, 2.2rem); margin-bottom: 2rem; }
+  .post-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .post-card {
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .post-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card); }
+  .post-image { aspect-ratio: 16/10; }
+  .post-image img, .img-fallback { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .img-fallback { background: linear-gradient(135deg, #eee, #f6f6f7); }
+  .post-body { padding: 1.1rem 1.2rem 1.3rem; }
+  .post-body h3 {
+    font-size: 1rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .meta { font-size: 0.78rem; color: var(--slate); margin: 0; }
+
+  @media (max-width: 860px) {
+    .post-grid { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,197 @@
+---
+// src/layouts/Layout.astro
+// Layout = "bungkus" HTML yang dipakai berulang di semua halaman
+// (head, header, footer). Konten tiap halaman disisipkan lewat <slot />.
+
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Digiland.id' } = Astro.props;
+---
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title} | Digiland.id</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+      <!-- Konten dari tiap file .astro yang pakai Layout ini akan muncul di sini -->
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    /* Diambil langsung dari sampling warna logo digiland.id -
+       4 warna pinwheel + hitam wordmark. Ini satu-satunya sumber warna
+       di seluruh situs, tidak ada warna baru yang tidak berasal dari sini. */
+    --ink: #141414;
+    --ink-2: #1c1c1c;
+    --paper: #ffffff;
+    --paper-2: #f6f6f7;
+    --slate: #6b6f76;
+    --slate-on-dark: #a3a3ab;
+    --line: #ececed;
+    --line-on-dark: rgba(255, 255, 255, 0.1);
+
+    --logo-blue: #24aae1;
+    --logo-pink: #ed227d;
+    --logo-orange: #fcb040;
+    --logo-purple: #7f3f99;
+    --spectrum: linear-gradient(135deg, var(--logo-blue) 0%, var(--logo-pink) 40%, var(--logo-orange) 70%, var(--logo-purple) 100%);
+    /* Gradient khusus tombol/badge - 3 stop ungu->pink->oranye, dipakai
+       konsisten di semua CTA button biar terasa satu "brand gradient". */
+    --spectrum-btn: linear-gradient(90deg, var(--logo-purple) 0%, var(--logo-pink) 55%, var(--logo-orange) 100%);
+
+    --font-display: 'Poppins', system-ui, sans-serif;
+    --font-body: 'Poppins', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+    --radius: 16px;
+    --shadow-card: 0 20px 40px -24px rgba(20, 20, 20, 0.18);
+    --shadow-float: 0 24px 48px -16px rgba(127, 63, 153, 0.22);
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    color: var(--ink);
+    background: var(--paper);
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    margin: 0;
+  }
+  a { color: inherit; }
+  /* Tidak dikasih max-width di sini karena tiap section (Hero, Services, dll)
+     perlu bisa full-width untuk background-nya. Kalau perlu konten di dalam
+     section dibatasi lebar, atur max-width di dalam masing-masing komponen. */
+
+  /* ---- utility yang dipakai berulang di banyak komponen ---- */
+  .wrap {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding-inline: 1.5rem;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--logo-purple);
+    background: rgba(127, 63, 153, 0.08);
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    margin: 0 0 0.9rem;
+  }
+  .section-head {
+    max-width: 620px;
+  }
+  .section-head.center {
+    margin: 0 auto 3rem;
+    text-align: center;
+  }
+  .section-head h2 {
+    font-size: clamp(1.7rem, 2.8vw, 2.3rem);
+    margin-top: 0.5rem;
+  }
+  .section-head p {
+    color: var(--slate);
+    margin-top: 0.6rem;
+    line-height: 1.6;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.6rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.92rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+  .btn-gradient {
+    background: var(--spectrum-btn);
+    color: #fff;
+  }
+  .btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px -10px rgba(237, 34, 125, 0.45);
+  }
+  .btn-outline {
+    background: #fff;
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .btn-outline:hover {
+    transform: translateY(-2px);
+    border-color: var(--logo-pink);
+  }
+  .btn-outline-pink {
+    background: transparent;
+    color: var(--logo-pink);
+    border: 1px solid var(--logo-pink);
+  }
+  .btn-outline-pink:hover {
+    background: var(--logo-pink);
+    color: #fff;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.is-in {
+    opacity: 1;
+    transform: none;
+  }
+  noscript .reveal { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+</style>
+
+<script>
+  const items = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-in');
+          io.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.15 }
+  );
+  items.forEach((el) => io.observe(el));
+</script>

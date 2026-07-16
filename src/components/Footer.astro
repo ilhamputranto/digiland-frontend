@@ -1,0 +1,214 @@
+---
+import { Image } from 'astro:assets';
+import footerLogo from '../images/Logo-digiland-white.png';
+
+const year = new Date().getFullYear();
+
+const columns = [
+  {
+    title: 'Services',
+    links: [
+      { label: 'SEO', href: '/#services' },
+      { label: 'PPC Advertising', href: '/#services' },
+      { label: 'Social Media Marketing', href: '/#services' },
+      { label: 'Website Development', href: '/#services' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { label: 'About Us', href: '/#about' },
+      { label: 'Portfolio', href: '/#portfolio' },
+      { label: 'Blog', href: '/blog' },
+      { label: 'Contact', href: '/#contact' },
+    ],
+  },
+  {
+    title: 'Resources',
+    links: [
+      { label: 'Artikel', href: '/blog' },
+      { label: 'Case Study', href: '/blog' },
+      { label: 'FAQ', href: '/#contact' },
+      { label: 'Tools', href: '/#contact' },
+    ],
+  },
+];
+---
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="col brand-col">
+      <Image src={footerLogo} alt="Digiland.id" width={140} height={32} class="footer-logo" />
+      <p>Agensi digital marketing yang fokus pada pertumbuhan bisnis Anda di era digital.</p>
+      <div class="socials">
+        <a href="#" aria-label="Facebook">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 10-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0022 12z"/></svg>
+        </a>
+        <a href="#" aria-label="Instagram">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2.7 0 3 0 4.1.06 1.1.05 1.8.22 2.4.46.6.24 1.1.56 1.6 1.06.5.5.82 1 1.06 1.6.24.6.4 1.3.46 2.4.06 1.1.06 1.4.06 4.1s0 3-.06 4.1c-.05 1.1-.22 1.8-.46 2.4a4.3 4.3 0 01-1.06 1.6 4.3 4.3 0 01-1.6 1.06c-.6.24-1.3.4-2.4.46-1.1.06-1.4.06-4.1.06s-3 0-4.1-.06c-1.1-.05-1.8-.22-2.4-.46a4.3 4.3 0 01-1.6-1.06 4.3 4.3 0 01-1.06-1.6c-.24-.6-.4-1.3-.46-2.4C2 15 2 14.7 2 12s0-3 .06-4.1c.05-1.1.22-1.8.46-2.4.24-.6.56-1.1 1.06-1.6.5-.5 1-.82 1.6-1.06.6-.24 1.3-.4 2.4-.46C8.8 2.06 9.1 2 12 2zm0 5a5 5 0 100 10 5 5 0 000-10zm0 8.2a3.2 3.2 0 110-6.4 3.2 3.2 0 010 6.4zm5.2-8.4a1.17 1.17 0 100-2.34 1.17 1.17 0 000 2.34z"/></svg>
+        </a>
+        <a href="#" aria-label="LinkedIn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 5a2 2 0 11-4-.02 2 2 0 014 .02zM7 8.5H3V21h4V8.5zm6.4 0H9.6V21h3.8v-6.4c0-3.6 4.6-3.9 4.6 0V21H22v-7.2c0-6.7-7.4-6.4-8.6-3.1V8.5z"/></svg>
+        </a>
+        <a href="#" aria-label="YouTube">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.5-.45-5.1a2.9 2.9 0 00-2-2C18.9 4.5 12 4.5 12 4.5s-6.9 0-8.55.4a2.9 2.9 0 00-2 2C1 8.5 1 12 1 12s0 3.5.45 5.1a2.9 2.9 0 002 2c1.65.4 8.55.4 8.55.4s6.9 0 8.55-.4a2.9 2.9 0 002-2C23 15.5 23 12 23 12zM9.7 15.4V8.6l6 3.4z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    {columns.map((col) => (
+      <div class="col">
+        <h4>{col.title}</h4>
+        <ul>
+          {col.links.map((l) => (
+            <li><a href={l.href}>{l.label}</a></li>
+          ))}
+        </ul>
+      </div>
+    ))}
+
+    <div class="col">
+      <h4>Contact</h4>
+      <ul class="contact-list">
+        <li>Taman Anyelir 3, Kalimulya, Depok 16413</li>
+        <li>+62821-1912-1192</li>
+        <li>info@digiland.id</li>
+      </ul>
+    </div>
+
+    <div class="col newsletter-col">
+      <h4>Newsletter</h4>
+      <p>Dapatkan insight digital marketing terbaru setiap minggunya.</p>
+      <form class="newsletter-form" onsubmit="event.preventDefault()">
+        <input type="email" placeholder="Your email" required />
+        <button type="submit" aria-label="Subscribe">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="wrap bottom-bar">
+    <p>&copy; {year} Digiland.id. All rights reserved.</p>
+    <div class="legal-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--ink);
+    color: var(--slate-on-dark);
+    padding-top: 4rem;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr 1.2fr;
+    gap: 2rem;
+    padding-bottom: 3rem;
+  }
+  .brand-col p {
+    font-size: 0.86rem;
+    line-height: 1.6;
+    margin: 1rem 0 1.25rem;
+  }
+  .footer-logo { display: block; }
+  .socials {
+    display: flex;
+    gap: 0.6rem;
+  }
+  .socials a {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    transition: background 0.2s ease;
+  }
+  .socials a:hover { background: var(--logo-pink); }
+
+  .col h4 {
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0 0 1rem;
+  }
+  .col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    font-size: 0.86rem;
+  }
+  .col ul a {
+    color: var(--slate-on-dark);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .col ul a:hover { color: #fff; }
+  .contact-list li { line-height: 1.5; }
+
+  .newsletter-col p {
+    font-size: 0.84rem;
+    line-height: 1.5;
+    margin: 0 0 0.9rem;
+  }
+  .newsletter-form {
+    display: flex;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .newsletter-form input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 0.6rem 0.75rem;
+    color: #fff;
+    font-size: 0.85rem;
+    min-width: 0;
+  }
+  .newsletter-form input::placeholder { color: var(--slate-on-dark); }
+  .newsletter-form input:focus { outline: none; }
+  .newsletter-form button {
+    background: var(--spectrum-btn);
+    border: none;
+    padding: 0 0.9rem;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+
+  .bottom-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 0.8rem;
+  }
+  .legal-links {
+    display: flex;
+    gap: 1.25rem;
+  }
+  .legal-links a {
+    color: var(--slate-on-dark);
+    text-decoration: none;
+  }
+  .legal-links a:hover { color: #fff; }
+
+  @media (max-width: 1000px) {
+    .footer-grid { grid-template-columns: 1fr 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>

@@ -1,0 +1,96 @@
+---
+// Header - menu disesuaikan dengan mockup baru (Home, About, Services,
+// Portfolio, Blog, Contact) + tombol "Contact Us" gradient di kanan.
+// Active-state nav dideteksi dari URL saat ini (Astro.url.pathname).
+import { Image } from 'astro:assets';
+import logo from '../images/logo-digiland.id-black.webp';
+
+const navItems = [
+  { label: 'Home', href: '/' },
+  { label: 'About', href: '/#about' },
+  { label: 'Services', href: '/#services' },
+  { label: 'Portfolio', href: '/#clients' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Contact', href: '/#contact' },
+];
+
+const path = Astro.url.pathname;
+function isActive(href: string) {
+  if (href === '/') return path === '/';
+  if (href.startsWith('/#')) return path === '/';
+  return path.startsWith(href);
+}
+---
+<header class="site-header">
+  <div class="wrap bar">
+    <a href="/" class="logo">
+      <Image src={logo} alt="Digiland.id" width={150} height={38} />
+    </a>
+    <nav>
+      {navItems.map((item) => (
+        <a href={item.href} class={isActive(item.href) ? 'active' : ''}>
+          {item.label}
+          {isActive(item.href) && <span class="dot" aria-hidden="true"></span>}
+        </a>
+      ))}
+    </nav>
+    <a href="/#contact" class="btn btn-gradient contact-btn">
+      Contact Us
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    backdrop-filter: blur(8px);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 0.9rem;
+    gap: 1.5rem;
+  }
+  .logo img { display: block; }
+
+  nav {
+    display: flex;
+    gap: 1.9rem;
+    flex: 1;
+    justify-content: center;
+  }
+  nav a {
+    position: relative;
+    text-decoration: none;
+    color: var(--slate);
+    font-weight: 500;
+    font-size: 0.92rem;
+    padding-bottom: 4px;
+  }
+  nav a.active {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  nav a .dot {
+    position: absolute;
+    left: 50%;
+    bottom: -3px;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--logo-purple);
+  }
+
+  .contact-btn { flex-shrink: 0; padding: 0.65rem 1.4rem; }
+
+  @media (max-width: 900px) {
+    nav { display: none; }
+  }
+</style>

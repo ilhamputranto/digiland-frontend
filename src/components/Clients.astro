@@ -1,0 +1,107 @@
+---
+// Catatan: file logo klien perlu ditaruh di src/images/ (lihat DAFTAR-GAMBAR.md).
+import { Image } from 'astro:assets';
+import terraLogo from '../images/client-terra-indonesia.png';
+import henwaLogo from '../images/client-henwa.png';
+import westVistaLogo from '../images/client-west-vista.png';
+import kalaniasiaLogo from '../images/client-kalaniasia.png';
+import witekLogo from '../images/client-Witek-Logistics.webp';
+import dianristyLogo from '../images/client-dianristy.webp';
+import sinarSaktiLogo from '../images/client-sinarsaktiunion.webp';
+
+const clients = [
+  { name: 'Terra Indonesia', logo: terraLogo },
+  { name: 'Henwa Logistics', logo: henwaLogo },
+  { name: 'West Vista', logo: westVistaLogo },
+  { name: 'Kalani Astha Asia', logo: kalaniasiaLogo },
+  { name: 'Witek Logistics', logo: witekLogo },
+  { name: 'Dianristy', logo: dianristyLogo },
+  { name: 'Sinar Sakti Union', logo: sinarSaktiLogo },
+];
+---
+<section id="clients" class="clients reveal">
+  <div class="wrap">
+    <p class="eyebrow center">Trusted By Amazing Companies</p>
+    <div class="carousel">
+      <button class="nav-btn prev" aria-label="Sebelumnya" data-dir="-1">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="track">
+        {clients.map((c) => (
+          <Image src={c.logo} alt={c.name} width={150} class="client-logo" />
+        ))}
+      </div>
+      <button class="nav-btn next" aria-label="Berikutnya" data-dir="1">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .clients {
+    padding: 2rem 0 5.5rem;
+  }
+  .eyebrow.center {
+    display: block;
+    text-align: center;
+    width: fit-content;
+    margin: 0 auto 2rem;
+  }
+  .carousel {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .track {
+    flex: 1;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 2rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+  .track::-webkit-scrollbar { display: none; }
+  .track :global(.client-logo) {
+    height: 200px;
+    width: auto;
+    flex-shrink: 0;
+    filter: grayscale(1);
+    opacity: 0.6;
+    transition: filter 0.25s ease, opacity 0.25s ease;
+  }
+  .track :global(.client-logo:hover) {
+    filter: grayscale(0);
+    opacity: 1;
+  }
+  .nav-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--slate);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .nav-btn:hover {
+    background: var(--logo-purple);
+    color: #fff;
+    border-color: var(--logo-purple);
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.clients .nav-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const track = btn.closest('.carousel')?.querySelector('.track');
+      const dir = Number(btn.getAttribute('data-dir'));
+      track?.scrollBy({ left: dir * 220, behavior: 'smooth' });
+    });
+  });
+</script>
