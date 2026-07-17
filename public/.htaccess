@@ -1,0 +1,26 @@
+# File ini otomatis ikut ke-copy ke root hasil build (dist/) oleh Astro,
+# karena semua isi folder public/ disalin apa adanya ke output.
+# cPanel/Apache akan baca file ini otomatis di public_html.
+
+<IfModule mod_headers.c>
+  # Izinkan mesin pencari index halaman & ikuti semua link di dalamnya.
+  # (Ini juga perilaku default kalau header ini tidak ada sama sekali,
+  # tapi beberapa tool audit SEO minta header ini eksplisit ada.)
+  Header set X-Robots-Tag "index, follow"
+</IfModule>
+
+# Kompresi supaya loading lebih cepat (opsional tapi disarankan)
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+# Cache untuk file statis (gambar, font, CSS/JS hasil build Astro biasanya
+# sudah punya hash di nama filenya, jadi aman di-cache lama)
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+</IfModule>
