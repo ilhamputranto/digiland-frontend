@@ -3,7 +3,12 @@ name: Build and Deploy to cPanel
 on:
   push:
     branches: [main]
+  # Supaya bisa di-trigger manual juga dari tab "Actions" di GitHub kalau perlu
   workflow_dispatch:
+  # Dipicu dari luar GitHub - ini yang dipanggil WordPress lewat webhook
+  # tiap ada post/page/kategori yang berubah, supaya situs auto-rebuild.
+  repository_dispatch:
+    types: [wordpress-content-update]
 
 jobs:
   build-and-deploy:
@@ -37,6 +42,10 @@ jobs:
           port: 21
           local-dir: ./dist/
           server-dir: ./
+          # Jangan hapus file yang tidak ada di dist/ - beberapa hosting
+          # menaruh file sistem (cgi-bin, dll) di root yang tidak boleh
+          # ikut terhapus. Kalau yakin public_html cuma isi Astro, boleh
+          # dihapus baris exclude ini.
           exclude: |
             **/.git*
             **/.git*/**
