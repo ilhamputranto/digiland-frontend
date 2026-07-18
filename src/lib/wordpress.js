@@ -319,3 +319,51 @@ export async function getRelatedPosts({ categorySlug, excludeSlug, limit = 3 }) 
     return [];
   }
 }
+
+/**
+ * 6) WORDPRESS "PAGES" (bukan Post/artikel blog)
+ * Ini content type terpisah di WordPress - biasanya dipakai untuk halaman
+ * statis seperti "Kebijakan Privasi", "Tentang Kami versi panjang", dst.
+ * Dipakai oleh src/pages/[slug].astro supaya kalau kamu bikin Page baru
+ * di wp-admin, otomatis muncul jadi halaman baru di situs Astro + masuk
+ * sitemap, tanpa perlu deploy kode baru (cukup build ulang).
+ */
+export async function getAllPages() {
+  try {
+    const query = `
+      query AllPages {
+        pages(first: 200) {
+          nodes {
+            slug
+            uri
+          }
+        }
+      }
+    `;
+    const data = await fetchAPI(query);
+    // uri = path lengkap termasuk trailing slash, misal "/kebijakan-privasi/".
+    // slug dipakai sebagai nama route Astro-nya (cukup untuk Page yang flat,
+    // tidak bersarang di bawah Page lain).
+    return data.pages.nodes.map((p) => ({ slug: p.slug, uri: p.uri }));
+  } catch (err) {
+    console.error('getAllPages gagal, tidak ada WP Page yang di-generate.', err);
+    return [];
+  }
+}
+
+export async function getPageByUri(uri) {
+  const query = `
+    query PageByUri($uri: ID!) {
+      page(id: $uri, idType: URI) {
+        id
+        title
+        content
+        slug
+        date
+        modified
+      }
+    }
+  `;
+  const data = await fetchAPI(query, { uri });
+  return data.page;
+}
