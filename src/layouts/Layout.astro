@@ -94,7 +94,8 @@ const { title, description = 'Digiland.id' } = Astro.props;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
+    font-weight: 600;
     font-size: 0.72rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -194,4 +195,17 @@ const { title, description = 'Digiland.id' } = Astro.props;
     { threshold: 0.15 }
   );
   items.forEach((el) => io.observe(el));
+
+  // Ukur tinggi Header (yang sticky di top:0) dan simpan sebagai CSS
+  // variable --header-h. Dipakai elemen lain yang perlu nempel PERSIS DI
+  // BAWAH header (misal reading-progress bar di halaman artikel), supaya
+  // tidak saling tumpuk/rebutan posisi top:0 yang sama dengan Header.
+  function setHeaderHeightVar() {
+    const header = document.querySelector('.site-header');
+    if (header) {
+      document.documentElement.style.setProperty('--header-h', `${header.offsetHeight}px`);
+    }
+  }
+  setHeaderHeightVar();
+  window.addEventListener('resize', setHeaderHeightVar);
 </script>

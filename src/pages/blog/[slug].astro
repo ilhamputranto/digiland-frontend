@@ -168,7 +168,11 @@ const shareLinks = {
 <style>
   .progress-bar {
     position: sticky;
-    top: 0;
+    /* Sebelumnya top: 0 - bentrok dengan Header yang juga sticky top:0,
+       jadi progress bar ketutupan Header (z-index Header lebih tinggi)
+       dan kelihatan seperti tidak sticky/tidak jalan. Sekarang nempel
+       PERSIS di bawah Header, pakai tinggi Header yang diukur otomatis. */
+    top: var(--header-h, 64px);
     z-index: 39;
     background: #fff;
     border-bottom: 1px solid var(--line);

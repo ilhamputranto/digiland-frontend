@@ -34,18 +34,18 @@ const loopedClients = [
 <section id="clients" class="clients reveal">
   <div class="wrap">
     <p class="eyebrow center">Trusted By Amazing Companies</p>
-  </div>
-  <div class="marquee">
-    <div class="track">
-      {loopedClients.map((c) => (
-        <Image
-          src={c.logo}
-          alt={c.hidden ? '' : c.name}
-          aria-hidden={c.hidden ? 'true' : 'false'}
-          width={150}
-          class="client-logo"
-        />
-      ))}
+    <div class="marquee">
+      <div class="track">
+        {loopedClients.map((c) => (
+          <Image
+            src={c.logo}
+            alt={c.hidden ? '' : c.name}
+            aria-hidden={c.hidden ? 'true' : 'false'}
+            width={150}
+            class="client-logo"
+          />
+        ))}
+      </div>
     </div>
   </div>
 </section>
