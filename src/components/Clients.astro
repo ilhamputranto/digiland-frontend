@@ -1,5 +1,10 @@
 ---
 // Catatan: file logo klien perlu ditaruh di src/images/ (lihat DAFTAR-GAMBAR.md).
+//
+// Marquee infinite: list logo di-duplikasi 2x berurutan, lalu track-nya
+// digeser terus via CSS animation dari 0 sampai -50% (yaitu persis
+// selebar 1 set logo asli). Begitu sampai -50%, isinya identik dengan
+// posisi awal, jadi loop-nya terlihat mulus tanpa "patah".
 import { Image } from 'astro:assets';
 import terraLogo from '../images/client-terra-indonesia.png';
 import henwaLogo from '../images/client-henwa.png';
@@ -18,22 +23,29 @@ const clients = [
   { name: 'Dianristy', logo: dianristyLogo },
   { name: 'Sinar Sakti Union', logo: sinarSaktiLogo },
 ];
+
+// Set kedua ditandai aria-hidden supaya screen reader tidak baca logo yang
+// sama 2x - secara visual tetap dobel untuk keperluan loop.
+const loopedClients = [
+  ...clients.map((c) => ({ ...c, hidden: false })),
+  ...clients.map((c) => ({ ...c, hidden: true })),
+];
 ---
 <section id="clients" class="clients reveal">
   <div class="wrap">
     <p class="eyebrow center">Trusted By Amazing Companies</p>
-    <div class="carousel">
-      <button class="nav-btn prev" aria-label="Sebelumnya" data-dir="-1">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      <div class="track">
-        {clients.map((c) => (
-          <Image src={c.logo} alt={c.name} width={150} class="client-logo" />
-        ))}
-      </div>
-      <button class="nav-btn next" aria-label="Berikutnya" data-dir="1">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
-      </button>
+  </div>
+  <div class="marquee">
+    <div class="track">
+      {loopedClients.map((c) => (
+        <Image
+          src={c.logo}
+          alt={c.hidden ? '' : c.name}
+          aria-hidden={c.hidden ? 'true' : 'false'}
+          width={150}
+          class="client-logo"
+        />
+      ))}
     </div>
   </div>
 </section>
@@ -48,22 +60,26 @@ const clients = [
     width: fit-content;
     margin: 0 auto 2rem;
   }
-  .carousel {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+
+  .marquee {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   }
   .track {
-    flex: 1;
     display: flex;
-    justify-content: space-around;
     align-items: center;
-    gap: 2rem;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    scrollbar-width: none;
+    gap: 3rem;
+    width: max-content;
+    animation: marquee-scroll 32s linear infinite;
   }
-  .track::-webkit-scrollbar { display: none; }
+  .marquee:hover .track {
+    animation-play-state: paused;
+  }
+  @keyframes marquee-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
   .track :global(.client-logo) {
     height: 200px;
     width: auto;
@@ -76,32 +92,10 @@ const clients = [
     filter: grayscale(0);
     opacity: 1;
   }
-  .nav-btn {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    border: 1px solid var(--line);
-    background: #fff;
-    color: var(--slate);
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: background 0.2s ease, color 0.2s ease;
-  }
-  .nav-btn:hover {
-    background: var(--logo-purple);
-    color: #fff;
-    border-color: var(--logo-purple);
+
+  @media (prefers-reduced-motion: reduce) {
+    .track {
+      animation: none;
+    }
   }
 </style>
-
-<script>
-  document.querySelectorAll('.clients .nav-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const track = btn.closest('.carousel')?.querySelector('.track');
-      const dir = Number(btn.getAttribute('data-dir'));
-      track?.scrollBy({ left: dir * 220, behavior: 'smooth' });
-    });
-  });
-</script>
