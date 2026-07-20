@@ -1,12 +1,19 @@
 ---
 import { Image } from 'astro:assets';
 import footerLogo from '../images/Logo-digiland-white.png';
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
 
 const year = new Date().getFullYear();
 
 const columns = [
   {
-    title: 'Services',
+    title: t('footer.services'),
     links: [
       { label: 'SEO', href: '/#services' },
       { label: 'PPC Advertising', href: '/#services' },
@@ -15,18 +22,18 @@ const columns = [
     ],
   },
   {
-    title: 'Company',
+    title: t('footer.company'),
     links: [
-      { label: 'About Us', href: '/#about' },
-      { label: 'Portfolio', href: '/#portfolio' },
-      { label: 'Blog', href: '/blog' },
-      { label: 'Contact', href: '/#contact' },
+      { label: t('nav.about'), href: '/#about' },
+      { label: t('nav.portfolio'), href: '/#clients' },
+      { label: t('nav.blog'), href: '/blog' },
+      { label: t('nav.contact'), href: '/#contact' },
     ],
   },
   {
-    title: 'Resources',
+    title: t('footer.resources'),
     links: [
-      { label: 'Artikel', href: '/blog' },
+      { label: t('nav.blog'), href: '/blog' },
       { label: 'Case Study', href: '/blog' },
       { label: 'FAQ', href: '/#contact' },
       { label: 'Tools', href: '/#contact' },
@@ -38,7 +45,7 @@ const columns = [
   <div class="wrap footer-grid">
     <div class="col brand-col">
       <Image src={footerLogo} alt="Digiland.id" width={140} height={32} class="footer-logo" />
-      <p>Agensi digital marketing yang fokus pada pertumbuhan bisnis Anda di era digital.</p>
+      <p>{t('footer.tagline')}</p>
       <div class="socials">
         <a href="#" aria-label="Facebook">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 10-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0022 12z"/></svg>
@@ -67,7 +74,7 @@ const columns = [
     ))}
 
     <div class="col">
-      <h4>Contact</h4>
+      <h4>{t('footer.contact')}</h4>
       <ul class="contact-list">
         <li>Taman Anyelir 3, Kalimulya, Depok 16413</li>
         <li>+62821-1912-1192</li>
@@ -76,10 +83,10 @@ const columns = [
     </div>
 
     <div class="col newsletter-col">
-      <h4>Newsletter</h4>
-      <p>Dapatkan insight digital marketing terbaru setiap minggunya.</p>
+      <h4>{t('footer.newsletter')}</h4>
+      <p>{t('footer.newsletter.desc')}</p>
       <form class="newsletter-form" onsubmit="event.preventDefault()">
-        <input type="email" placeholder="Your email" required />
+        <input type="email" placeholder={t('footer.newsletter.placeholder')} required />
         <button type="submit" aria-label="Subscribe">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
@@ -88,10 +95,10 @@ const columns = [
   </div>
 
   <div class="wrap bottom-bar">
-    <p>&copy; {year} Digiland.id. All rights reserved.</p>
+    <p>&copy; {year} Digiland.id. {t('footer.rights')}</p>
     <div class="legal-links">
-      <a href="#">Privacy Policy</a>
-      <a href="#">Terms of Service</a>
+      <a href="#">{t('footer.privacy')}</a>
+      <a href="#">{t('footer.terms')}</a>
     </div>
   </div>
 </footer>

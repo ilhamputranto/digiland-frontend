@@ -12,6 +12,13 @@ import favicon from '../images/favicon-digiland.png';
 import testiHendra from '../images/testimonial-hendra-widjaya.webp';
 import testiYasni from '../images/testimonial-yasni-lavinia.webp';
 import testiFitri from '../images/testimonial-fitri.webp';
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
 
 const trustAvatars = [
   { src: rina, alt: 'Rina' },
@@ -37,21 +44,20 @@ const leadsAvatars = [...avatarPool].sort(() => Math.random() - 0.5).slice(0, 3)
 
   <div class="wrap hero-inner">
     <div class="hero-copy">
-      <p class="eyebrow">Digital Marketing Agency</p>
+      <p class="eyebrow">{t('hero.eyebrow')}</p>
       <h1>
-        Grow your business<br />
-        through <span class="accent">SEO &amp;<br />Digital Marketing</span>
+        {t('hero.title.line1')}<br />
+        {t('hero.title.connector')} <span class="accent">{t('hero.title.accent')}</span>
       </h1>
       <p class="subhead">
-        Strategi data-driven untuk meningkatkan visibilitas, trafik, dan
-        konversi bisnis Anda secara signifikan.
+        {t('hero.subhead')}
       </p>
 
       <div class="hero-actions">
-        <a href="#contact" class="btn btn-gradient">Free SEO Audit
+        <a href="#contact" class="btn btn-gradient">{t('hero.cta.primary')}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
-        <a href="#services" class="btn btn-outline">Our Services
+        <a href="#services" class="btn btn-outline">{t('hero.cta.secondary')}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
       </div>
@@ -62,7 +68,7 @@ const leadsAvatars = [...avatarPool].sort(() => Math.random() - 0.5).slice(0, 3)
             <Image src={a.src} alt={a.alt} width={64} height={64} class="avatar-photo" />
           ))}
         </div>
-        <p><strong>50+</strong> Klien percaya pada kami</p>
+        <p><strong>50+</strong> {t('hero.trust')}</p>
       </div>
     </div>
 
@@ -72,7 +78,7 @@ const leadsAvatars = [...avatarPool].sort(() => Math.random() - 0.5).slice(0, 3)
       </div>
 
       <div class="float-card card-traffic">
-        <p class="label">Organic Traffic</p>
+        <p class="label">{t('hero.card.traffic')}</p>
         <p class="value">25.6K <span class="up">+23.5%</span></p>
         <svg class="mini-chart" viewBox="0 0 100 30" preserveAspectRatio="none">
           <polyline points="0,25 15,20 30,22 45,12 60,15 75,6 100,2" fill="none" stroke="#7f3f99" stroke-width="2.5"/>
@@ -80,8 +86,8 @@ const leadsAvatars = [...avatarPool].sort(() => Math.random() - 0.5).slice(0, 3)
       </div>
 
       <div class="float-card card-keyword">
-        <p class="label">Keyword Ranking</p>
-        <p class="value big">Top 3 <span class="up">+15 Keywords</span></p>
+        <p class="label">{t('hero.card.keyword')}</p>
+        <p class="value big">{t('hero.card.keyword.value')} <span class="up">{t('hero.card.keyword.sub')}</span></p>
         <div class="bars" aria-hidden="true">
           <span style="height:30%;background:#f6c9de"></span>
           <span style="height:45%;background:#f6c9de"></span>
@@ -92,7 +98,7 @@ const leadsAvatars = [...avatarPool].sort(() => Math.random() - 0.5).slice(0, 3)
       </div>
 
       <div class="float-card card-leads">
-        <p class="label">Leads Generated</p>
+        <p class="label">{t('hero.card.leads')}</p>
         <p class="value">1,248 <span class="up">+32.1%</span></p>
         <div class="avatar-stack small" aria-hidden="true">
           {leadsAvatars.map((a) => (
@@ -102,7 +108,7 @@ const leadsAvatars = [...avatarPool].sort(() => Math.random() - 0.5).slice(0, 3)
       </div>
 
       <div class="float-card card-conversion">
-        <p class="label">Conversion Rate</p>
+        <p class="label">{t('hero.card.conversion')}</p>
         <div class="donut" style="--val:18.7"></div>
         <p class="value small centered"><span class="up">+18.7%</span></p>
       </div>

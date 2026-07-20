@@ -1,0 +1,32 @@
+---
+// src/pages/id/index.astro -> route "/id" (versi Bahasa Indonesia)
+// Komponen yang dipakai SAMA PERSIS dengan src/pages/index.astro (versi
+// English) - satu-satunya beda adalah prop lang="id" yang dikirim ke tiap
+// komponen, yang menentukan teks mana dari src/i18n/ui.ts yang ditampilkan.
+
+import Layout from '../../layouts/Layout.astro';
+import Hero from '../../components/Hero.astro';
+import StatsBar from '../../components/StatsBar.astro';
+import About from '../../components/About.astro';
+import Services from '../../components/Services.astro';
+import WhyChooseUs from '../../components/WhyChooseUs.astro';
+import Clients from '../../components/Clients.astro';
+import Testimonials from '../../components/Testimonials.astro';
+import CTA from '../../components/CTA.astro';
+
+const lang = 'id';
+---
+<Layout
+  lang={lang}
+  title="Layanan Digital Marketing & SEO"
+  description="Tingkatkan kehadiran online brand Anda bersama Digiland.id! Layanan SEO & digital marketing profesional untuk meningkatkan visibilitas bisnis Anda."
+>
+  <Hero lang={lang} />
+  <StatsBar lang={lang} />
+  <About lang={lang} />
+  <Services lang={lang} />
+  <WhyChooseUs lang={lang} />
+  <Clients lang={lang} />
+  <Testimonials lang={lang} />
+  <CTA lang={lang} />
+</Layout>

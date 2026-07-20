@@ -2,29 +2,37 @@
 // 4 layanan dipetakan ke 4 warna logo secara berurutan (biru, pink, oranye,
 // ungu) - jumlahnya kebetulan sama-sama 4, jadi warnanya benar-benar
 // merepresentasikan identitas brand, bukan pilihan acak.
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
 const services = [
   {
     color: '#24aae1',
-    title: 'Search Engine Optimization (SEO)',
-    desc: 'Tingkatkan peringkat website Anda di Google dan dapatkan traffic organik berkualitas.',
+    title: t('services.seo.title'),
+    desc: t('services.seo.desc'),
     icon: 'M11 4a7 7 0 104.9 12.02l4.55 4.55 1.41-1.41-4.55-4.55A7 7 0 0011 4zm0 2a5 5 0 110 10 5 5 0 010-10z',
   },
   {
     color: '#ed227d',
-    title: 'Pay-Per-Click (PPC Advertising)',
-    desc: 'Iklan yang tepat sasaran untuk mendatangkan traffic dan leads berkualitas dengan cepat.',
+    title: t('services.ppc.title'),
+    desc: t('services.ppc.desc'),
     icon: 'M4 3l16 7-6.5 2.5L11 19z',
   },
   {
     color: '#fcb040',
-    title: 'Social Media Marketing',
-    desc: 'Bangun brand awareness dan engagement di media sosial yang relevan dengan audiens Anda.',
+    title: t('services.social.title'),
+    desc: t('services.social.desc'),
     icon: 'M4 4h16v12H8l-4 4V4z',
   },
   {
     color: '#7f3f99',
-    title: 'Website Development',
-    desc: 'Website profesional, cepat, dan mobile-friendly yang dirancang untuk konversi maksimal.',
+    title: t('services.web.title'),
+    desc: t('services.web.desc'),
     icon: 'M8 6L2 12l6 6M16 6l6 6-6 6M14 4l-4 16',
   },
 ];
@@ -32,9 +40,9 @@ const services = [
 <section id="services" class="services">
   <div class="wrap">
     <div class="section-head center reveal">
-      <p class="eyebrow">What We Do</p>
-      <h2>Our Services</h2>
-      <p>Layanan digital marketing terlengkap untuk mengakselerasi pertumbuhan bisnis Anda.</p>
+      <p class="eyebrow">{t('services.eyebrow')}</p>
+      <h2>{t('services.title')}</h2>
+      <p>{t('services.subhead')}</p>
     </div>
 
     <div class="service-grid">
@@ -48,7 +56,7 @@ const services = [
           <h3>{s.title}</h3>
           <p>{s.desc}</p>
           <a href="#contact" class="learn-more" style={`color:${s.color}`}>
-            Learn more <span aria-hidden="true">→</span>
+            {t('services.learnMore')} <span aria-hidden="true">→</span>
           </a>
         </div>
       ))}
@@ -58,7 +66,7 @@ const services = [
 
 <style>
   .services {
-    padding: 10rem 0;
+    padding: 6rem 0;
     background: var(--paper-2);
   }
   .service-grid {

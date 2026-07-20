@@ -1,22 +1,23 @@
 ---
 import { Image } from 'astro:assets';
 import officePhoto from '../images/coworking-office.jpg';
+import { useTranslations, type Lang } from '../i18n/ui';
 
-const checklist = [
-  'Pendekatan berbasis data & riset mendalam',
-  'Strategi custom sesuai kebutuhan bisnis',
-  'Tim ahli berpengalaman & bersertifikasi',
-];
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const checklist = [t('about.check1'), t('about.check2'), t('about.check3')];
 ---
 <section id="about" class="about">
   <div class="wrap about-inner">
     <div class="about-text reveal">
-      <p class="eyebrow">About Us</p>
-      <h2>We help brands achieve remarkable results</h2>
+      <p class="eyebrow">{t('about.eyebrow')}</p>
+      <h2>{t('about.title')}</h2>
       <p class="body-text">
-        Digiland.id adalah agensi digital marketing yang berfokus pada hasil
-        nyata. Kami menggabungkan strategi, kreativitas, dan data untuk
-        membantu bisnis bertumbuh di dunia digital.
+        {t('about.body')}
       </p>
       <ul class="checklist">
         {checklist.map((item) => (
@@ -28,21 +29,21 @@ const checklist = [
           </li>
         ))}
       </ul>
-      <a href="#services" class="btn btn-outline-pink">Learn More About Us
+      <a href="#services" class="btn btn-outline-pink">{t('about.cta')}
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
     </div>
 
     <div class="about-visual reveal">
       <div class="dot-grid" aria-hidden="true"></div>
-      <Image src={officePhoto} alt="Tim Digiland.id bekerja" width={640} height={520} class="office-photo" />
+      <Image src={officePhoto} alt="Digiland.id team at work" width={640} height={520} class="office-photo" />
       <div class="float-card card-years">
         <p class="value">7+</p>
-        <p class="label">Years Experience</p>
+        <p class="label">{t('about.card.years')}</p>
       </div>
       <div class="float-card card-projects">
         <p class="value orange">100+</p>
-        <p class="label">Projects Completed</p>
+        <p class="label">{t('about.card.projects')}</p>
       </div>
     </div>
   </div>
@@ -50,7 +51,7 @@ const checklist = [
 
 <style>
   .about {
-    padding: 10rem 0;
+    padding: 6rem 0;
   }
   .about-inner {
     display: grid;

@@ -5,28 +5,42 @@
 //
 // Mobile (<900px): nav horizontal disembunyikan, diganti tombol hamburger
 // yang membuka panel menu slide-in dari kanan (lihat <script> di bawah).
+//
+// i18n: terima prop `lang`, translate label nav lewat dictionary, dan
+// tampilkan language switcher (icon bendera) untuk pindah EN <-> ID.
 import { Image } from 'astro:assets';
 import logo from '../images/logo-digiland.id-black.webp';
+import { useTranslations, getLocalizedPath, languages, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
 
 const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'About', href: '/#about' },
-  { label: 'Services', href: '/#services' },
-  { label: 'Portfolio', href: '/#clients' },
-  { label: 'Blog', href: '/blog' },
-  { label: 'Contact', href: '/#contact' },
+  { label: t('nav.home'), href: '/' },
+  { label: t('nav.about'), href: '/#about' },
+  { label: t('nav.services'), href: '/#services' },
+  { label: t('nav.portfolio'), href: '/#clients' },
+  { label: t('nav.blog'), href: '/blog' },
+  { label: t('nav.contact'), href: '/#contact' },
 ];
 
 const path = Astro.url.pathname;
 function isActive(href: string) {
-  if (href === '/') return path === '/';
-  if (href.startsWith('/#')) return path === '/';
-  return path.startsWith(href);
+  const cleanPath = path.replace(/^\/id(\/|$)/, '/');
+  if (href === '/') return cleanPath === '/';
+  if (href.startsWith('/#')) return cleanPath === '/';
+  return cleanPath.startsWith(href);
 }
+
+const otherLang: Lang = lang === 'en' ? 'id' : 'en';
+const switchHref = getLocalizedPath(path, otherLang);
 ---
 <header class="site-header">
   <div class="wrap bar">
-    <a href="/" class="logo">
+    <a href={lang === 'en' ? '/' : '/id'} class="logo">
       <Image src={logo} alt="Digiland.id" width={150} height={38} />
     </a>
 
@@ -39,16 +53,23 @@ function isActive(href: string) {
       ))}
     </nav>
 
-    <a href="/#contact" class="btn btn-gradient contact-btn">
-      Contact Us
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-    </a>
+    <div class="right-cluster">
+      <a href={switchHref} class="lang-switch" aria-label={`Switch to ${languages[otherLang].label}`}>
+        <span class="flag">{languages[otherLang].flag}</span>
+        <span class="lang-code">{otherLang.toUpperCase()}</span>
+      </a>
 
-    <button type="button" class="hamburger" id="menu-open-btn" aria-label="Buka menu" aria-expanded="false" aria-controls="mobile-menu">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+      <a href="/#contact" class="btn btn-gradient contact-btn">
+        {t('nav.contactBtn')}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+
+      <button type="button" class="hamburger" id="menu-open-btn" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -56,10 +77,10 @@ function isActive(href: string) {
 <div class="menu-overlay" id="menu-overlay" hidden></div>
 
 <!-- Panel menu mobile, slide dari kanan -->
-<nav class="mobile-menu" id="mobile-menu" aria-label="Menu mobile" aria-hidden="true">
+<nav class="mobile-menu" id="mobile-menu" aria-label="Mobile menu" aria-hidden="true">
   <div class="mobile-menu-head">
     <Image src={logo} alt="Digiland.id" width={120} height={30} />
-    <button type="button" class="menu-close-btn" id="menu-close-btn" aria-label="Tutup menu">
+    <button type="button" class="menu-close-btn" id="menu-close-btn" aria-label="Close menu">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
   </div>
@@ -70,8 +91,12 @@ function isActive(href: string) {
       </li>
     ))}
   </ul>
+  <a href={switchHref} class="mobile-lang-switch">
+    <span class="flag">{languages[otherLang].flag}</span>
+    {languages[otherLang].label}
+  </a>
   <a href="/#contact" class="btn btn-gradient mobile-contact-btn">
-    Contact Us
+    {t('nav.contactBtn')}
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
   </a>
 </nav>
@@ -123,7 +148,37 @@ function isActive(href: string) {
     background: var(--logo-purple);
   }
 
-  .contact-btn { flex-shrink: 0; padding: 0.65rem 1.4rem; }
+  .right-cluster {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  /* ---- language switcher ---- */
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.4rem 0.7rem;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  .lang-switch:hover {
+    border-color: var(--logo-purple);
+    background: rgba(127, 63, 153, 0.06);
+  }
+  .lang-switch .flag {
+    font-size: 1.05rem;
+    line-height: 1;
+  }
+
+  .contact-btn { padding: 0.65rem 1.4rem; }
 
   /* ---- hamburger button (disembunyikan di desktop) ---- */
   .hamburger {
@@ -206,7 +261,6 @@ function isActive(href: string) {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    flex: 1;
   }
   .mobile-menu ul a {
     display: block;
@@ -221,6 +275,18 @@ function isActive(href: string) {
     color: var(--logo-purple);
     font-weight: 700;
   }
+  .mobile-lang-switch {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.85rem 0.25rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .mobile-lang-switch .flag { font-size: 1.15rem; }
   .mobile-contact-btn {
     justify-content: center;
     margin-top: 1.25rem;
@@ -246,7 +312,6 @@ function isActive(href: string) {
   function openMenu() {
     panel?.classList.add('is-open');
     overlay?.removeAttribute('hidden');
-    // Sedikit delay 1 frame supaya transition opacity overlay kepicu
     requestAnimationFrame(() => overlay?.classList.add('is-open'));
     panel?.setAttribute('aria-hidden', 'false');
     openBtn?.setAttribute('aria-expanded', 'true');
@@ -259,18 +324,13 @@ function isActive(href: string) {
     panel?.setAttribute('aria-hidden', 'true');
     openBtn?.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
-    // Tunggu transition selesai baru benar-benar disembunyikan dari a11y tree
     setTimeout(() => overlay?.setAttribute('hidden', ''), 250);
   }
 
   openBtn?.addEventListener('click', openMenu);
   closeBtn?.addEventListener('click', closeMenu);
   overlay?.addEventListener('click', closeMenu);
-
-  // Tutup otomatis kalau salah satu link menu diklik
   panel?.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeMenu));
-
-  // Tutup dengan tombol Escape
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeMenu();
   });

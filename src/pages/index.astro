@@ -1,8 +1,11 @@
 ---
-// src/pages/index.astro -> route "/"
+// src/pages/index.astro -> route "/" (English, default lang - tanpa prefix)
 // Karena digiland.id itu one-page site, homepage ini menyusun SEMUA section
 // secara berurutan. Tidak ada fetch WordPress di sini karena semua konten
 // masih statis (sesuai keputusan awal).
+//
+// Versi Indonesia ada di src/pages/id/index.astro - komponennya SAMA PERSIS,
+// cuma beda prop lang="id" yang dikirim ke tiap komponen.
 
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
@@ -13,17 +16,20 @@ import WhyChooseUs from '../components/WhyChooseUs.astro';
 import Clients from '../components/Clients.astro';
 import Testimonials from '../components/Testimonials.astro';
 import CTA from '../components/CTA.astro';
+
+const lang = 'en';
 ---
 <Layout
+  lang={lang}
   title="Digital Marketing & SEO Services"
   description="Boost your brand's online presence with Digiland.id! Expert SEO & digital marketing services designed to increase visibility."
 >
-  <Hero />
-  <StatsBar />
-  <About />
-  <Services />
-  <WhyChooseUs />
-  <Clients />
-  <Testimonials />
-  <CTA />
+  <Hero lang={lang} />
+  <StatsBar lang={lang} />
+  <About lang={lang} />
+  <Services lang={lang} />
+  <WhyChooseUs lang={lang} />
+  <Clients lang={lang} />
+  <Testimonials lang={lang} />
+  <CTA lang={lang} />
 </Layout>

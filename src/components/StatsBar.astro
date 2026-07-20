@@ -1,28 +1,36 @@
 ---
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
 const stats = [
   {
     color: '#24aae1',
     icon: 'M4 14l6-6 4 4 6-8M20 4v6h-6',
     value: '184%',
-    label: 'Average Increase in Traffic',
+    label: t('stats.traffic'),
   },
   {
     color: '#fcb040',
     icon: 'M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M15 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a4 4 0 00-4 4M17 7a4 4 0 010 6',
     value: '50+',
-    label: 'Happy Clients Across Indonesia',
+    label: t('stats.clients'),
   },
   {
     color: '#ed227d',
     icon: 'M12 3l2.6 5.6L21 9.3l-4.6 4.3L17.6 20 12 16.9 6.4 20l1.2-6.4L3 9.3l6.4-.7L12 3z',
     value: '5.0',
-    label: 'Client Rating on Google',
+    label: t('stats.rating'),
   },
   {
     color: '#7f3f99',
     icon: 'M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0V4zM7 6H4a3 3 0 003 3M17 6h3a3 3 0 01-3 3',
     value: '7+',
-    label: 'Years Experience in Digital Marketing',
+    label: t('stats.experience'),
   },
 ];
 ---

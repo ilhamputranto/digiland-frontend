@@ -24,6 +24,7 @@ export async function GET() {
 
   // 1) Halaman statis inti
   entries.push(urlEntry(`${SITE_URL}/`));
+  entries.push(urlEntry(`${SITE_URL}/id`));
   entries.push(urlEntry(`${SITE_URL}/blog`));
 
   // 2) Semua post (ambil banyak sekaligus, cukup untuk situs skala blog biasa)

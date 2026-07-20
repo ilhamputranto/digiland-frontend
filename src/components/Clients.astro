@@ -13,6 +13,13 @@ import kalaniasiaLogo from '../images/client-kalaniasia.png';
 import witekLogo from '../images/client-Witek-Logistics.webp';
 import dianristyLogo from '../images/client-DianRisty.webp';
 import sinarSaktiLogo from '../images/client-sinarsaktiunion.webp';
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useTranslations(lang);
 
 const clients = [
   { name: 'Terra Indonesia', logo: terraLogo },
@@ -33,7 +40,7 @@ const loopedClients = [
 ---
 <section id="clients" class="clients reveal">
   <div class="wrap">
-    <p class="eyebrow center">Trusted By Amazing Companies</p>
+    <p class="eyebrow center">{t('clients.eyebrow')}</p>
     <div class="marquee">
       <div class="track">
         {loopedClients.map((c) => (
