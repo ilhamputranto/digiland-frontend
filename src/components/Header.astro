@@ -34,9 +34,6 @@ function isActive(href: string) {
   if (href.startsWith('/#')) return cleanPath === '/';
   return cleanPath.startsWith(href);
 }
-
-const otherLang: Lang = lang === 'en' ? 'id' : 'en';
-const switchHref = getLocalizedPath(path, otherLang);
 ---
 <header class="site-header">
   <div class="wrap bar">
@@ -54,10 +51,23 @@ const switchHref = getLocalizedPath(path, otherLang);
     </nav>
 
     <div class="right-cluster">
-      <a href={switchHref} class="lang-switch" aria-label={`Switch to ${languages[otherLang].label}`}>
-        <span class="flag">{languages[otherLang].flag}</span>
-        <span class="lang-code">{otherLang.toUpperCase()}</span>
-      </a>
+      <div class="lang-switch" role="group" aria-label="Language">
+        <a
+          href={getLocalizedPath(path, 'en')}
+          class={lang === 'en' ? 'lang-option active' : 'lang-option'}
+          aria-current={lang === 'en' ? 'true' : 'false'}
+        >
+          <span class="flag">{languages.en.flag}</span> EN
+        </a>
+        <span class="lang-sep">|</span>
+        <a
+          href={getLocalizedPath(path, 'id')}
+          class={lang === 'id' ? 'lang-option active' : 'lang-option'}
+          aria-current={lang === 'id' ? 'true' : 'false'}
+        >
+          <span class="flag">{languages.id.flag}</span> ID
+        </a>
+      </div>
 
       <a href="/#contact" class="btn btn-gradient contact-btn">
         {t('nav.contactBtn')}
@@ -91,10 +101,20 @@ const switchHref = getLocalizedPath(path, otherLang);
       </li>
     ))}
   </ul>
-  <a href={switchHref} class="mobile-lang-switch">
-    <span class="flag">{languages[otherLang].flag}</span>
-    {languages[otherLang].label}
-  </a>
+  <div class="mobile-lang-switch">
+    <a
+      href={getLocalizedPath(path, 'en')}
+      class={lang === 'en' ? 'mobile-lang-option active' : 'mobile-lang-option'}
+    >
+      <span class="flag">{languages.en.flag}</span> English
+    </a>
+    <a
+      href={getLocalizedPath(path, 'id')}
+      class={lang === 'id' ? 'mobile-lang-option active' : 'mobile-lang-option'}
+    >
+      <span class="flag">{languages.id.flag}</span> Indonesia
+    </a>
+  </div>
   <a href="/#contact" class="btn btn-gradient mobile-contact-btn">
     {t('nav.contactBtn')}
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -155,27 +175,40 @@ const switchHref = getLocalizedPath(path, otherLang);
     flex-shrink: 0;
   }
 
-  /* ---- language switcher ---- */
+  /* ---- language switcher: 2 bendera sekaligus, yang aktif ditandai jelas ---- */
   .lang-switch {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 0.35rem;
-    text-decoration: none;
-    color: var(--ink);
-    font-size: 0.85rem;
-    font-weight: 600;
+    gap: 0.4rem;
     border: 1px solid var(--line);
     border-radius: 999px;
-    padding: 0.4rem 0.7rem;
-    transition: border-color 0.2s ease, background 0.2s ease;
+    padding: 0.35rem 0.7rem;
   }
-  .lang-switch:hover {
-    border-color: var(--logo-purple);
-    background: rgba(127, 63, 153, 0.06);
+  .lang-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    text-decoration: none;
+    color: var(--slate);
+    font-size: 0.82rem;
+    font-weight: 600;
+    opacity: 0.55;
+    transition: opacity 0.2s ease, color 0.2s ease;
   }
-  .lang-switch .flag {
-    font-size: 1.05rem;
+  .lang-option:hover {
+    opacity: 0.85;
+  }
+  .lang-option.active {
+    color: var(--ink);
+    opacity: 1;
+  }
+  .lang-option .flag {
+    font-size: 1rem;
     line-height: 1;
+  }
+  .lang-sep {
+    color: var(--line);
+    font-size: 0.75rem;
   }
 
   .contact-btn { padding: 0.65rem 1.4rem; }
@@ -278,15 +311,25 @@ const switchHref = getLocalizedPath(path, otherLang);
   .mobile-lang-switch {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-    color: var(--ink);
-    font-weight: 600;
-    font-size: 0.95rem;
+    gap: 1.25rem;
     padding: 0.85rem 0.25rem;
     border-bottom: 1px solid var(--line);
   }
-  .mobile-lang-switch .flag { font-size: 1.15rem; }
+  .mobile-lang-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-decoration: none;
+    color: var(--slate);
+    font-weight: 600;
+    font-size: 0.92rem;
+    opacity: 0.55;
+  }
+  .mobile-lang-option.active {
+    color: var(--logo-purple);
+    opacity: 1;
+  }
+  .mobile-lang-option .flag { font-size: 1.15rem; }
   .mobile-contact-btn {
     justify-content: center;
     margin-top: 1.25rem;
