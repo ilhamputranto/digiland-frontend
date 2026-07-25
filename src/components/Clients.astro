@@ -105,4 +105,13 @@ const loopedClients = [
       animation: none;
     }
   }
+  /* tambahkan di dalam <style> Clients.astro */
+  @media (max-width: 900px) {
+    .track :global(.client-logo) { height: 110px; }
+    .track { gap: 2rem; }
+    }
+  @media (max-width: 560px) {
+    .track :global(.client-logo) { height: 70px; }
+    .track { gap: 1.5rem; }
+    }
 </style>

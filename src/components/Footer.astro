@@ -218,4 +218,9 @@ const columns = [
   @media (max-width: 640px) {
     .footer-grid { grid-template-columns: 1fr 1fr; }
   }
+  /* tambahkan di dalam <style> Footer.astro */
+  @media (max-width: 480px) {
+    .footer-grid { grid-template-columns: 1fr; }
+    .bottom-bar { flex-direction: column; align-items: flex-start; }
+  }
 </style>

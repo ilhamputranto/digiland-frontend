@@ -130,6 +130,9 @@ const testimonials = [
     border-radius: 4px;
     background: var(--logo-purple);
   }
+    @media (max-width: 480px) {
+    .person :global(.person-photo) { width: 70px; height: 70px; }
+  }
 
   .reveal-1 { transition-delay: 0.08s; }
   .reveal-2 { transition-delay: 0.16s; }

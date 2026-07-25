@@ -326,4 +326,18 @@ const leadsAvatars = [...avatarPool].sort(() => Math.random() - 0.5).slice(0, 3)
     .mark { width: 70px; height: 70px; }
     .mark :global(.mark-icon) { width: 32px; height: 32px; }
   }
+  /* tambahkan di dalam <style> Hero.astro */
+    @media (max-width: 900px) {
+      .hero { padding: 3rem 0 3rem; }
+    }
+    @media (max-width: 480px) {
+      .hero-visual { height: 260px; }
+      .float-card { width: 108px; padding: 0.55rem 0.65rem; }
+      .float-card .value { font-size: 0.85rem; }
+      .float-card .value.big { font-size: 0.78rem; }
+      .card-traffic { left: 0; }
+      .card-keyword { right: -2%; }
+      .card-leads { left: -2%; }
+      .card-conversion { right: 0; }
+    }
 </style>
