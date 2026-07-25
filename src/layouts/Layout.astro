@@ -34,6 +34,10 @@ const { title, description = 'Digiland.id' } = Astro.props;
       <!-- Konten dari tiap file .astro yang pakai Layout ini akan muncul di sini -->
     </main>
     <Footer />
+
+    <button type="button" id="back-to-top" class="back-to-top" aria-label="Kembali ke atas">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    </button>
   </body>
 </html>
 
@@ -171,6 +175,44 @@ const { title, description = 'Digiland.id' } = Astro.props;
     transform: none;
   }
   noscript .reveal { opacity: 1; transform: none; }
+  .back-to-top {
+      position: fixed;
+      right: 1.5rem;
+      bottom: 1.5rem;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: var(--spectrum-btn);
+      color: #fff;
+      border: none;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-card);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.2s ease;
+      z-index: 45;
+    }
+    .back-to-top.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .back-to-top:hover {
+      box-shadow: 0 14px 28px -10px rgba(237, 34, 125, 0.45);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 640px) {
+      .back-to-top {
+        right: 1rem;
+        bottom: 1rem;
+        width: 42px;
+        height: 42px;
+      }
+    }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -206,6 +248,22 @@ const { title, description = 'Digiland.id' } = Astro.props;
       document.documentElement.style.setProperty('--header-h', `${header.offsetHeight}px`);
     }
   }
+  // Tombol back-to-top: muncul setelah scroll melewati 1 tinggi layar,
+  // klik untuk smooth-scroll ke atas.
+  const backToTopBtn = document.getElementById('back-to-top');
+  function toggleBackToTop() {
+    if (!backToTopBtn) return;
+    if (window.scrollY > window.innerHeight * 0.6) {
+      backToTopBtn.classList.add('is-visible');
+    } else {
+      backToTopBtn.classList.remove('is-visible');
+    }
+  }
+  backToTopBtn?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  document.addEventListener('scroll', toggleBackToTop, { passive: true });
+  toggleBackToTop();
   setHeaderHeightVar();
   window.addEventListener('resize', setHeaderHeightVar);
 </script>
