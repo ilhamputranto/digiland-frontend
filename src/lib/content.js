@@ -38,7 +38,7 @@ export function buildTableOfContents(html = '') {
   const usedIds = new Set();
 
   const withIds = html.replace(/<h([23])([^>]*)>(.*?)<\/h\1>/gi, (match, level, attrs, inner) => {
-    const text = inner.replace(/<[^>]+>/g, '').trim();
+    const text = decodeEntities(inner.replace(/<[^>]+>/g, '').trim());
     let id = slugify(text) || `section-${toc.length + 1}`;
     let unique = id;
     let n = 2;
@@ -66,4 +66,15 @@ export function formatDateID(isoDate) {
     month: 'long',
     year: 'numeric',
   });
+}
+function decodeEntities(text) {
+  return text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#8217;/g, '’')
+    .replace(/&#8220;/g, '“')
+    .replace(/&#8221;/g, '”')
+    .replace(/&hellip;/g, '…');
 }
