@@ -220,11 +220,13 @@ const shareLinks = {
   /* ---- TOC (kotak berbingkai, sesuai mockup) ---- */
   .toc {
     position: sticky;
-    top: 5rem;
+    top: calc(var(--header-h, 64px) + 3.2rem);
     border: 1px solid var(--line);
     border-radius: var(--radius);
     padding: 1.25rem;
-  }
+    max-height: calc(100vh - var(--header-h, 64px) - 4rem);
+    overflow-y: auto;
+    }
   .toc-title {
     font-family: var(--font-mono);
     font-size: 0.7rem;
