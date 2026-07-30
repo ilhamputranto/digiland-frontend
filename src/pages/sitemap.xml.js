@@ -14,8 +14,13 @@ import { getAllPosts, getAllCategorySlugs, getAllPages } from '../lib/wordpress.
 const SITE_URL = 'https://digiland.id';
 
 function urlEntry(loc, lastmod) {
+  // WPGraphQL mengembalikan date tanpa timezone designator (misal
+  // "2026-07-25T15:21:06"), yang dianggap invalid oleh parser Google.
+  // Ambil bagian tanggalnya saja (YYYY-MM-DD) - format ini valid W3C
+  // Datetime dan tidak butuh info timezone sama sekali.
+  const cleanDate = lastmod ? lastmod.split('T')[0] : null;
   return `  <url>
-    <loc>${loc}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''}
+    <loc>${loc}</loc>${cleanDate ? `\n    <lastmod>${cleanDate}</lastmod>` : ''}
   </url>`;
 }
 
